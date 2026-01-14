@@ -83,7 +83,11 @@ export class NewsletterService {
   private async sendConfirmationEmail(email: string): Promise<void> {
     // Read the email template from src directory in development
     const templatePath = path.join(process.cwd(), 'src', 'newsletter', 'templates', 'confirmation-email.html');
-    const htmlContent = fs.readFileSync(templatePath, 'utf-8');
+    let htmlContent = fs.readFileSync(templatePath, 'utf-8');
+    
+    // Replace template variable with actual frontend URL
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'https://web3-platform-three.vercel.app';
+    htmlContent = htmlContent.replace('{{FRONTEND_URL}}', frontendUrl);
 
     const url = 'https://api.brevo.com/v3/smtp/email';
     
