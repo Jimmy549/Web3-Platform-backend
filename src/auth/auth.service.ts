@@ -116,7 +116,16 @@ export class AuthService {
   }
 
   async getProfile(userId: string) {
-    return this.usersService.findById(userId);
+    const user = await this.usersService.findById(userId);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    return {
+      id: user._id.toString(),
+      email: user.email,
+      name: user.name,
+      picture: user.picture,
+    };
   }
 
   async resetDatabase() {
