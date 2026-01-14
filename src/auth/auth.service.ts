@@ -27,14 +27,20 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
-    const user = await this.usersService.create({
-      email,
-      name,
-      password: hashedPassword,
-      isActive: true,
-    });
-
-    return this.login(user);
+    try {
+      const user = await this.usersService.create({
+        email,
+        name,
+        password: hashedPassword,
+        isActive: true,
+      });
+      return this.login(user);
+    } catch (error: any) {
+      if (error.code === 11000) {
+        throw new ConflictException('User with this email already exists');
+      }
+      throw error;
+    }
   }
 
   async loginWithPassword(loginDto: LoginDto) {
@@ -92,7 +98,7 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
       user: {
-        id: user._id,
+        id: user._id.toString(),
         email: user.email,
         name: user.name,
         picture: user.picture,
