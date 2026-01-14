@@ -8,7 +8,7 @@ export class User {
   @Prop({ unique: true, sparse: true })
   googleId: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true, unique: true, sparse: true })
   email: string;
 
   @Prop({ required: true })
