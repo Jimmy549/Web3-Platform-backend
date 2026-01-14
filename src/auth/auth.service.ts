@@ -5,6 +5,9 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User } from '../schemas/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +15,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    @InjectModel(User.name) private userModel: Model<any>,
   ) {}
 
   async signup(signupDto: SignupDto) {
@@ -117,5 +121,13 @@ export class AuthService {
 
   async resetDatabase() {
     return this.usersService.deleteAll();
+  }
+
+  async rebuildIndexes() {
+    // Drop all indexes except _id
+    await this.userModel.collection.dropIndexes();
+    // Recreate indexes from schema
+    await this.userModel.syncIndexes();
+    return { message: 'Indexes rebuilt successfully' };
   }
 }

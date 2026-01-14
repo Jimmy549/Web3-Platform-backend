@@ -62,4 +62,12 @@ export class AuthController {
     await this.authService.resetDatabase();
     return { message: 'Database reset successfully' };
   }
+
+  @Get('rebuild-indexes')
+  async rebuildIndexes() {
+    if (this.configService.get<string>('NODE_ENV') !== 'development') {
+      return { message: 'Not allowed in production' };
+    }
+    return this.authService.rebuildIndexes();
+  }
 }
