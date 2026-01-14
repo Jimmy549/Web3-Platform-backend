@@ -17,16 +17,10 @@ export class AuthService {
   async signup(signupDto: SignupDto) {
     const { name, email, password } = signupDto;
 
-    // Check if user already exists
-    const existingUser = await this.usersService.findByEmail(email);
-    if (existingUser) {
-      throw new ConflictException('User with this email already exists');
-    }
-
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
+    // Create user - let MongoDB handle duplicate key errors
     try {
       const user = await this.usersService.create({
         email,
