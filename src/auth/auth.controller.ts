@@ -53,4 +53,13 @@ export class AuthController {
   async logout() {
     return { message: 'Logged out successfully' };
   }
+
+  @Get('reset-db')
+  async resetDb() {
+    if (this.configService.get<string>('NODE_ENV') !== 'development') {
+      return { message: 'Not allowed in production' };
+    }
+    await this.authService.resetDatabase();
+    return { message: 'Database reset successfully' };
+  }
 }

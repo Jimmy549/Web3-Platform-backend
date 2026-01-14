@@ -64,18 +64,29 @@ export class AuthService {
   async validateGoogleUser(googleUser: any): Promise<any> {
     const { googleId, email, name, picture } = googleUser;
 
-    // Check if user exists
+    // Check if user exists by googleId
     let user = await this.usersService.findByGoogleId(googleId);
 
     if (!user) {
-      // Create new user
-      user = await this.usersService.create({
-        googleId,
-        email,
-        name,
-        picture,
-        isActive: true,
-      });
+      // Check if email already exists
+      const existingEmail = await this.usersService.findByEmail(email);
+      if (existingEmail) {
+        // Update existing user with googleId
+        user = await this.usersService.updateUser(existingEmail['_id'], {
+          googleId,
+          name,
+          picture,
+        });
+      } else {
+        // Create new user
+        user = await this.usersService.create({
+          googleId,
+          email,
+          name,
+          picture,
+          isActive: true,
+        });
+      }
     } else {
       // Update user info (in case profile changed)
       user = await this.usersService.updateUser(user['_id'], {
@@ -108,5 +119,9 @@ export class AuthService {
 
   async getProfile(userId: string) {
     return this.usersService.findById(userId);
+  }
+
+  async resetDatabase() {
+    return this.usersService.deleteAll();
   }
 }

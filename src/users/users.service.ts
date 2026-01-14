@@ -31,4 +31,8 @@ export class UsersService {
       .findByIdAndUpdate(id, updateData, { new: true })
       .exec();
   }
+
+  async deleteAll(): Promise<any> {
+    return this.userModel.deleteMany({}).exec();
+  }
 }
