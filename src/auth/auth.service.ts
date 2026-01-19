@@ -70,7 +70,7 @@ export class AuthService {
       const existingEmail = await this.usersService.findByEmail(email);
       if (existingEmail) {
         // Update existing user with googleId
-        user = await this.usersService.updateUser(existingEmail['_id'], {
+        user = await this.usersService.updateUser(existingEmail._id.toString(), {
           googleId,
           name,
           picture,
@@ -87,7 +87,7 @@ export class AuthService {
       }
     } else {
       // Update user info (in case profile changed)
-      user = await this.usersService.updateUser(user['_id'], {
+      user = await this.usersService.updateUser(user._id.toString(), {
         name,
         picture,
       });

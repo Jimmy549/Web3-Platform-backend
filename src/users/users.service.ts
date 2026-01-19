@@ -9,24 +9,24 @@ export class UsersService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ email }).exec();
   }
 
-  async findByGoogleId(googleId: string): Promise<User | null> {
+  async findByGoogleId(googleId: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ googleId }).exec();
   }
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string): Promise<UserDocument | null> {
     return this.userModel.findById(id).exec();
   }
 
-  async create(userData: Partial<User>): Promise<User> {
+  async create(userData: Partial<User>): Promise<UserDocument> {
     const user = new this.userModel(userData);
     return user.save();
   }
 
-  async updateUser(id: string, updateData: Partial<User>): Promise<User | null> {
+  async updateUser(id: string, updateData: Partial<User>): Promise<UserDocument | null> {
     return this.userModel
       .findByIdAndUpdate(id, updateData, { new: true })
       .exec();
